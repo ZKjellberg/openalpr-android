@@ -16,9 +16,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static File destination;
     private TextView resultTextView;
     private ImageView imageView;
+    private String region;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
 
         resultTextView.setText("Press the button below to start a request.");
+
+        final ToggleButton aSwitch = (ToggleButton) findViewById(R.id.switchRegion);
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    region = "US";
+                } else {
+                    // The toggle is disabled
+                    region = "EU";
+                }
+            }
+        });
     }
 
     @Override
@@ -80,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    String result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+                    String result = OpenALPR.Factory.create(MainActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig(region, "", destination.getAbsolutePath(), openAlprConfFile, 10);
 
                     Log.d("OPEN ALPR", result);
 
